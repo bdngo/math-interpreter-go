@@ -21,12 +21,16 @@ func main() {
 			fmt.Println(err)
 		}
 
+		if len(tokens) == 0 {
+			continue
+		}
+
 		parser := MakeParser(tokens)
 		ast, err := parser.parse()
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		fmt.Println(ast)
+		fmt.Println(Eval(ast))
 	}
 }

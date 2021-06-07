@@ -5,23 +5,25 @@ import (
 	"testing"
 )
 
-func TestEmpty(t *testing.T) {
+func TestLexEmpty(t *testing.T) {
 	lex := MakeLexer("")
 	tokens, err := lex.Tokenize()
 	if err != nil {
 		t.Error("failed to tokenize", err)
+		return
 	}
 	if len(tokens) != 0 {
 		t.Error("returned nonzero tokens")
 	}
 }
 
-func TestNumber(t *testing.T) {
+func TestLexNumber(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		lex := MakeLexer(fmt.Sprint(i))
 		tokens, err := lex.Tokenize()
 		if err != nil {
 			t.Error("failed to tokenize", err)
+			return
 		}
 		expected := Token{NUMBER, float64(i)}
 		if tokens[0] != expected {
@@ -33,6 +35,7 @@ func TestNumber(t *testing.T) {
 	tokens, err := lex.Tokenize()
 	if err != nil {
 		t.Error("failed to tokenize", err)
+		return
 	}
 	expected := Token{NUMBER, 123.456}
 	if tokens[0] != expected {
@@ -40,11 +43,12 @@ func TestNumber(t *testing.T) {
 	}
 }
 
-func TestOperators(t *testing.T) {
+func TestLexOperators(t *testing.T) {
 	lex := MakeLexer("+-*/")
 	tokens, err := lex.Tokenize()
 	if err != nil {
 		t.Error("failed to tokenize", err)
+		return
 	}
 	expected := []Token{
 		MakeToken(PLUS),
@@ -58,11 +62,12 @@ func TestOperators(t *testing.T) {
 	}
 }
 
-func TestParens(t *testing.T) {
+func TestLexParens(t *testing.T) {
 	lex := MakeLexer("()")
 	tokens, err := lex.Tokenize()
 	if err != nil {
 		t.Error("failed to tokenize", err)
+		return
 	}
 	expected := []Token{
 		MakeToken(L_PAREN),
@@ -74,11 +79,12 @@ func TestParens(t *testing.T) {
 	}
 }
 
-func TestFull(t *testing.T) {
+func TestLexFull(t *testing.T) {
 	lex := MakeLexer("27 + (43 / 36 - 48) * 51")
 	tokens, err := lex.Tokenize()
 	if err != nil {
 		t.Error("failed to tokenize", err)
+		return
 	}
 	expected := []Token{
 		{NUMBER, 27.0},

@@ -21,6 +21,12 @@ func main() {
 			fmt.Println(err)
 		}
 
-		fmt.Println(tokens)
+		parser := MakeParser(tokens)
+		ast, err := parser.parse()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println(ast)
 	}
 }

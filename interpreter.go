@@ -1,5 +1,7 @@
 package main
 
+import "math"
+
 func Eval(ast Node) (res float64) {
 	ast.visit(NodeVisitor{
 		func(nn NumNode) { res = nn.node },
@@ -7,8 +9,10 @@ func Eval(ast Node) (res float64) {
 		func(sn SubNode) { res = Eval(sn.nodeL) - Eval(sn.nodeR) },
 		func(mn MulNode) { res = Eval(mn.nodeL) * Eval(mn.nodeR) },
 		func(dn DivNode) { res = Eval(dn.nodeL) / Eval(dn.nodeR) },
-		func(dn PosNode) { res = Eval(dn.node) },
-		func(dn NegNode) { res = -Eval(dn.node) },
+		func(mn ModNode) { res = float64(int(Eval(mn.nodeL)) % int(Eval(mn.nodeR))) },
+		func(pn PowNode) { res = math.Pow(Eval(pn.nodeL), Eval(pn.nodeR)) },
+		func(pn PosNode) { res = Eval(pn.node) },
+		func(nn NegNode) { res = -Eval(nn.node) },
 	})
 	return
 }
@@ -40,6 +44,14 @@ func PostfixEval(tokens []Token) float64 {
 			a = pop(&stack).value
 			b = pop(&stack).value
 			stack = append(stack, Token{NUMBER, a / b})
+		case MODULO:
+			a = pop(&stack).value
+			b = pop(&stack).value
+			stack = append(stack, Token{NUMBER, float64(int(a) % int(b))})
+		case POWER:
+			a = pop(&stack).value
+			b = pop(&stack).value
+			stack = append(stack, Token{NUMBER, math.Pow(a, b)})
 		default:
 			stack = append(stack, t)
 		}

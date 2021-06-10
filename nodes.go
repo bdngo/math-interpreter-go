@@ -12,6 +12,8 @@ type NodeVisitor struct {
 	visitSub func(SubNode)
 	visitMul func(MulNode)
 	visitDiv func(DivNode)
+	visitMod func(ModNode)
+	visitPow func(PowNode)
 	visitPos func(PosNode)
 	visitNeg func(NegNode)
 }
@@ -58,6 +60,24 @@ type DivNode struct {
 
 func (d DivNode) visit(v NodeVisitor) {
 	v.visitDiv(d)
+}
+
+type ModNode struct {
+	nodeL Node
+	nodeR Node
+}
+
+func (m ModNode) visit(v NodeVisitor) {
+	v.visitMod(m)
+}
+
+type PowNode struct {
+	nodeL Node
+	nodeR Node
+}
+
+func (p PowNode) visit(v NodeVisitor) {
+	v.visitPow(p)
 }
 
 type PosNode struct {

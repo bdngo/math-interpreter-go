@@ -91,6 +91,10 @@ func (lex *Lexer) Tokenize() ([]Token, error) {
 			res = append(res, MakeToken(MULTIPLY))
 		case "/":
 			res = append(res, MakeToken(DIVIDE))
+		case "%":
+			res = append(res, MakeToken(MODULO))
+		case "^":
+			res = append(res, MakeToken(POWER))
 		case "(":
 			res = append(res, MakeToken(L_PAREN))
 		case ")":

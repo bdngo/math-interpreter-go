@@ -78,14 +78,14 @@ func (p *Parser) expr() (Node, error) {
 }
 
 func (p *Parser) term() (Node, error) {
-	res, err := p.factor()
+	res, err := p.exponent()
 	var dummy Node
 
 	if err != nil {
 		return dummy, err
 	}
 
-	for !isParserTokenEmpty(p) && (p.currToken.tType == MULTIPLY || p.currToken.tType == DIVIDE) {
+	for !isParserTokenEmpty(p) && (p.currToken.tType == MULTIPLY || p.currToken.tType == DIVIDE || p.currToken.tType == MODULO) {
 		if p.currToken.tType == MULTIPLY {
 			p.advance()
 			term, err := p.factor()
@@ -100,6 +100,35 @@ func (p *Parser) term() (Node, error) {
 				return dummy, err
 			}
 			res = DivNode{res, term}
+		} else if p.currToken.tType == MODULO {
+			p.advance()
+			term, err := p.factor()
+			if err != nil {
+				return dummy, err
+			}
+			res = ModNode{res, term}
+		}
+	}
+
+	return res, nil
+}
+
+func (p *Parser) exponent() (Node, error) {
+	res, err := p.factor()
+	var dummy Node
+
+	if err != nil {
+		return dummy, err
+	}
+
+	for !isParserTokenEmpty(p) && p.currToken.tType == POWER {
+		if p.currToken.tType == POWER {
+			p.advance()
+			term, err := p.factor()
+			if err != nil {
+				return dummy, err
+			}
+			res = PowNode{res, term}
 		}
 	}
 

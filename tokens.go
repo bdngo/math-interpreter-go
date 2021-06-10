@@ -8,6 +8,8 @@ const (
 	MINUS
 	MULTIPLY
 	DIVIDE
+	MODULO
+	POWER
 	L_PAREN
 	R_PAREN
 )

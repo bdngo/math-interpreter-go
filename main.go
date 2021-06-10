@@ -8,7 +8,9 @@ import (
 )
 
 func main() {
-	isPostfix := flag.Bool("postfix", false, "whether the calculator is run in postfix or infix mode")
+	isPostfix := flag.Bool("-postfix", false, "evaluate postfix instead of infix expressions")
+	printTokens := flag.Bool("t", false, "print tokens from the lexer")
+	printAST := flag.Bool("a", false, "print the AST from the parser (infix only)")
 	flag.Parse()
 
 	for {
@@ -27,6 +29,9 @@ func main() {
 		if len(tokens) == 0 {
 			continue
 		}
+		if *printTokens {
+			fmt.Println(tokens)
+		}
 
 		var res float64
 		if *isPostfix {
@@ -34,6 +39,9 @@ func main() {
 		} else {
 			parser := MakeParser(tokens)
 			ast, err := parser.parse()
+			if *printAST {
+				fmt.Println(ast)
+			}
 			if err != nil {
 				fmt.Println(err)
 			}

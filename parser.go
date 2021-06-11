@@ -174,3 +174,51 @@ func (p *Parser) factor() (Node, error) {
 		return dummy, errors.New("bad syntax")
 	}
 }
+
+func ShuntingYard(tokens []Token) []Token {
+	opStack := make([]Token, 0)
+	outQueue := make([]Token, 0)
+
+	for _, t := range tokens {
+		switch t.tType {
+		case NUMBER:
+			outQueue = append(outQueue, t)
+		case L_PAREN:
+			opStack = append(opStack, t)
+		case R_PAREN:
+			for len(opStack) > 0 && opStack[len(opStack)-1].tType != L_PAREN {
+				outQueue = append(outQueue, opStack[len(opStack)-1])
+				opStack = opStack[:len(opStack)-1]
+			}
+			opStack = opStack[:len(opStack)-1]
+		default:
+			pmSet := map[TokenType]struct{}{
+				MULTIPLY: {},
+				DIVIDE:   {},
+				MODULO:   {},
+				POWER:    {},
+			}
+			if t.tType == PLUS || t.tType == MINUS {
+				for len(opStack) > 0 {
+					_, ok := pmSet[opStack[len(opStack)-1].tType]
+					if ok {
+						outQueue = append(outQueue, opStack[len(opStack)-1])
+					} else {
+						break
+					}
+				}
+				opStack = append(opStack, t)
+			} else if t.tType == MULTIPLY || t.tType == DIVIDE {
+				for len(opStack) > 0 && opStack[len(opStack)-1].tType == POWER {
+					outQueue = append(outQueue, opStack[len(opStack)-1])
+				}
+				opStack = append(opStack, t)
+			}
+		}
+	}
+	// Reversing operator stack
+	for i, j := 0, len(opStack)-1; i < j; i, j = i+1, j-1 {
+		opStack[i], opStack[j] = opStack[j], opStack[i]
+	}
+	return append(outQueue, opStack...)
+}
